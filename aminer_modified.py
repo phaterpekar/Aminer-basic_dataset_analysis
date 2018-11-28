@@ -9,33 +9,18 @@ Created on Tue Jan 14 18:05:41 2018
 import numpy as np
 import pandas as pd
 
-#venues = []
-#publications = []
-#citations = []
-#index = []
-#authors = []
-#citations = set()
-#index=""
-
-dict = {'index':[],'venues':[],'publications':[]} #'authors':[],
-
+dict = {'index':[],'venues':[],'publications':[]}
 citDict ={'index':[],'citations':[]}
 authDict = {'index':[], 'authors':[]}
 
-with open("C:\\Unsupervised\\HW1\AP_First15.txt", 'r+', newline='', encoding="utf8") as file:
+with open("C:\\Unsupervised\\HW1\AP_train.txt", 'r+', newline='', encoding="utf8") as file: #AP_First15.txt AP_train.txt
     for line in file:
         if line.startswith("#index"):
             ind = line[7:].strip('\n').strip('\r')
-            #index.append(ind)
             dict['index'].append(ind)
-        #elif line.startswith("#@"):
-        #    list = []
-        #    for auth in line[3:].split(";"):
-        #        list.append(auth.strip())
-        #    #authors.append(list)
-        #    dict['authors'].append(list)
         elif line.startswith("#@"):
             for auth in line[3:].split(";"):
+                auth = auth.strip('\n').strip('\r')
                 authDict['index'].append(ind)
                 authDict['authors'].append(auth)
         elif line.startswith("#c"):
@@ -49,52 +34,21 @@ with open("C:\\Unsupervised\\HW1\AP_First15.txt", 'r+', newline='', encoding="ut
             citDict['index'].append(ind)
             citDict['citations'].append(cit)
 
-            #citations.add(ind +':' + cit)
-
-# with open("C:\\Unsupervised\\HW1\AP_First15.txt", 'r+', newline='', encoding="utf8") as file:
-#     for line in file:
-#         if line.startswith("#%"):
-#             citations.add(index + line)
-
 mainDF = pd.DataFrame.from_dict(dict)
 citDF = pd.DataFrame.from_dict(citDict)
 authDF = pd.DataFrame.from_dict(authDict)
 
-joinDF = mainDF.join(citDF.set_index('index'), on='index')
-newDF = joinDF.join(authDF.set_index('index'), on = 'index')
 
-# len(index)
-# len(authors)
-#
-# index
-# index.remove()
-# del index[0]
-# dict['index'].append(index)
-# dict['authors'].append(authors)
-#
-# dict.keys()
-# dict['authors']
-# dict['index']
-#
-# index[0:5]
-# authors[0:5]
-#
-#
-#
-# len(dict['authors'].values())
-#
-#
-#
+# Total number of Citations :
+print(len(citDF.citations))
 
+# Total number of Publications:
+print(len(mainDF.publications))
 
+# Total number of Distinct Authors:
+authDF = authDF.replace('', np.NaN)
+print(authDF.authors.nunique())
 
-#file = open("C:\\Unsupervised\\HW1\AP_train.txt", 'r+', newline='', encoding="utf8")
+# Total number of venues
+print(mainDF.venues.nunique())
 
-#print(file.readline())
-#iter(file)
-#print(next(file))
-#with open("C:\\Unsupervised\\HW1\AP_train.txt", 'r+', newline='', encoding="utf8") as file:
-    #print(file.readlines(50))
- #   iter(file)
- #   print(next(file))
-#file.close()
