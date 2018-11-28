@@ -52,3 +52,11 @@ print(authDF.authors.nunique())
 # Total number of venues
 print(mainDF.venues.nunique())
 
+
+# B. The Count numbers don't seem accurate. For the same conference, we can see that the venues have different names.
+# While a different publication don't have the same names. This will increase our count of venues than the true count as it is not consistent.
+
+mainDF['venues'][mainDF['venues'].str.contains('Principles and Practice of Knowledge Discovery in Databases')].unique()
+
+
+
