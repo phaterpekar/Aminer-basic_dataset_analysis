@@ -6,86 +6,95 @@ Created on Tue Jan 14 18:05:41 2018
 """
 ### PROBLEM 1: Aminer : basic dataset analysis
 #### A. Compute the number of distinct authors, publication venues, publications, and citations/references
+import numpy as np
+import pandas as pd
 
-authors = set()
-venues = set()
-publications = set()
-citations = set()
-index = ""
+#venues = []
+#publications = []
+#citations = []
+#index = []
+#authors = []
+#citations = set()
+#index=""
 
-with open("C:\\Unsupervised\\HW1\AP_train.txt", 'r+', newline='', encoding="utf8") as file:
+dict = {'index':[],'venues':[],'publications':[]} #'authors':[],
+
+citDict ={'index':[],'citations':[]}
+authDict = {'index':[], 'authors':[]}
+
+with open("C:\\Unsupervised\\HW1\AP_First15.txt", 'r+', newline='', encoding="utf8") as file:
     for line in file:
         if line.startswith("#index"):
-            index = line[7:]
-            publications.add(line)
+            ind = line[7:].strip('\n').strip('\r')
+            #index.append(ind)
+            dict['index'].append(ind)
+        #elif line.startswith("#@"):
+        #    list = []
+        #    for auth in line[3:].split(";"):
+        #        list.append(auth.strip())
+        #    #authors.append(list)
+        #    dict['authors'].append(list)
         elif line.startswith("#@"):
             for auth in line[3:].split(";"):
-                authors.add(auth.strip())
+                authDict['index'].append(ind)
+                authDict['authors'].append(auth)
         elif line.startswith("#c"):
-            venues.add(line)
+            ven = line[2:].strip()
+            dict['venues'].append(ven)
+        elif line.startswith("#*"):
+            pub = line[2:].strip()
+            dict['publications'].append(pub)
         elif line.startswith("#%"):
-            citations.add(index + line)
+            cit = line[2:].strip()
+            citDict['index'].append(ind)
+            citDict['citations'].append(cit)
 
-print("Total number of Distinct Authors", len(authors))
-print("Total number of Venues", len(venues))
-print("Total number of Publications", len(publications))
-print("Total number of Citations/Referenes", len(citations))
+            #citations.add(ind +':' + cit)
 
-#### B. Are these numbers likely to be accurate?
-### As an example look up all the publications venue names associated with the conference
-### “Principles and Practice of Knowledge Discovery in Databases”13 – what do you notice?
+# with open("C:\\Unsupervised\\HW1\AP_First15.txt", 'r+', newline='', encoding="utf8") as file:
+#     for line in file:
+#         if line.startswith("#%"):
+#             citations.add(index + line)
 
-venue_set = set()
+mainDF = pd.DataFrame.from_dict(dict)
+citDF = pd.DataFrame.from_dict(citDict)
+authDF = pd.DataFrame.from_dict(authDict)
 
-with open("C:\\Unsupervised\\HW1\AP_train.txt", 'r', newline='', encoding="utf8") as apfile:
-    index = ""
-    venue = ""
-    for row in apfile:
-        if row.startswith("#c"):
-            if "Principles and Practice of Knowledge Discovery in Databases" in row:
-                venue = row[3:]
-                venue_set.add(venue)
+joinDF = mainDF.join(citDF.set_index('index'), on='index')
+newDF = joinDF.join(authDF.set_index('index'), on = 'index')
 
-print("Venues lists are ")
-for venue in venue_set:
-    print(venue)
+# len(index)
+# len(authors)
+#
+# index
+# index.remove()
+# del index[0]
+# dict['index'].append(index)
+# dict['authors'].append(authors)
+#
+# dict.keys()
+# dict['authors']
+# dict['index']
+#
+# index[0:5]
+# authors[0:5]
+#
+#
+#
+# len(dict['authors'].values())
+#
+#
+#
 
-# The Count numbers don't seem accurate.
 
 
-#### C. For each author, construct the list of publications.
-### Plot a histogram of the number of publications per author (use a logarithmic scale on the y axis)
+#file = open("C:\\Unsupervised\\HW1\AP_train.txt", 'r+', newline='', encoding="utf8")
 
-author_publications = {}
-
-# Considering each Citation as one
-with open("C:\\Unsupervised\\HW1\AP_train.txt", 'r', newline='', encoding="utf8") as apfile:
-    for row in apfile:
-        if row.startswith("#@"):
-            for column in row[3:].split(";"):
-                if author_publications.get(column.strip()) == None:
-                    author_publications[column.strip()] = 1
-                else:
-                    author_publications[column.strip()] += 1
-
-authors = list(author_publications.keys())
-publications = list(author_publications.values())
-
-# Removing values for the null author and it's respective publication count ,
-# because it is an outlier in this case and has a value much greater than the mean.
-
-null_index = authors.index("")
-del authors[null_index]
-del publications[null_index]
-
-import math
-import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
-
-plt.xlabel('Authors')
-plt.ylabel('Publications')
-plt.title('Histogram of Publications per author')
-plt.grid(True)
-
-plt.hist(publications, bins=50, log=True)
-plt.show()
+#print(file.readline())
+#iter(file)
+#print(next(file))
+#with open("C:\\Unsupervised\\HW1\AP_train.txt", 'r+', newline='', encoding="utf8") as file:
+    #print(file.readlines(50))
+ #   iter(file)
+ #   print(next(file))
+#file.close()
