@@ -13,6 +13,7 @@ publications = set()
 citations = set()
 index = ""
 
+print("   ")
 with open("C:\\Unsupervised\\HW1\AP_train.txt", 'r+', newline='', encoding="utf8") as file:
     for line in file:
         if line.startswith("#index"):
